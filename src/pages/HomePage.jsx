@@ -3,15 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { HiOutlineMusicalNote } from "react-icons/hi2";
 import gsap from "gsap";
 
+// Import instrument images
+import drumsImg from "../assets/photos/drums.png";
+import fluteImg from "../assets/photos/flute.png";
+import guitarImg from "../assets/photos/guitar.png";
+import tablaImg from "../assets/photos/tabla.png";
+import harmoniumImg from "../assets/photos/harmonium.png";
+import saxophoneImg from "../assets/photos/saxophone.png";
+import keyboardImg from "../assets/photos/keyboard.png";
+import violinImg from "../assets/photos/violin.png";
+
+// Array of instruments with images
 const instruments = [
-  "drums",
-  "flute",
-  "guitar",
-  "tabla",
-  "harmonium",
-  "saxophone",
-  "keyboard",
-  "violin",
+  { name: "drums", image: drumsImg },
+  { name: "flute", image: fluteImg },
+  { name: "guitar", image: guitarImg },
+  { name: "tabla", image: tablaImg },
+  { name: "harmonium", image: harmoniumImg },
+  { name: "saxophone", image: saxophoneImg },
+  { name: "keyboard", image: keyboardImg },
+  { name: "violin", image: violinImg },
 ];
 
 const HomePage = () => {
@@ -37,7 +48,7 @@ const HomePage = () => {
       });
     });
 
-    return () => ctx.revert(); // Clean up on unmount
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -81,17 +92,21 @@ const HomePage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {instruments.map((instrument, index) => (
             <div
-              key={instrument}
+              key={instrument.name}
               ref={(el) => (cardRefs.current[index] = el)}
               className="opacity-0 translate-y-6 bg-white bg-opacity-70 backdrop-blur-md rounded-2xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer transform hover:scale-[1.02]"
-              onClick={() => navigate(`/instrument/${instrument}`)}
+              onClick={() => navigate(`/instrument/${instrument.name}`)}
             >
-              <div className="bg-purple-100 h-40 flex items-center justify-center rounded-t-2xl">
-                <HiOutlineMusicalNote className="text-6xl text-purple-300" />
+              <div className="bg-purple-100 h-40 flex items-center justify-center rounded-t-2xl overflow-hidden">
+                <img
+                  src={instrument.image}
+                  alt={instrument.name}
+                  className="h-full object-contain p-4"
+                />
               </div>
               <div className="p-5">
                 <h3 className="text-lg font-semibold capitalize text-gray-800 mb-2">
-                  {instrument}
+                  {instrument.name}
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Explore resources and start learning
