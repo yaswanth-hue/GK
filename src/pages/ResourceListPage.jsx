@@ -69,21 +69,8 @@ const ResourceListPage = () => {
     return () => unsubs.forEach((u) => u());
   }, [resources, instrument]);
 
-  const handleToggle = (resId, field) => {
-    const resInter = interactions[resId] || {};
-  
-    if (field === "upvoted") {
-      if (resInter.downvoted) {
-        toggleField(instrument, resId, "downvoted");
-      }
-    } else if (field === "downvoted") {
-      if (resInter.upvoted) {
-        toggleField(instrument, resId, "upvoted");
-      }
-    }
-  
-    toggleField(instrument, resId, field);
-  };
+  const handleToggle = (resId, field) => toggleField(instrument, resId, field);
+
   const handlePostComment = (resId) => {
     const text = commentText[resId];
     if (!text) return;
