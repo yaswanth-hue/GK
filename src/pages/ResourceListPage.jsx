@@ -1,4 +1,3 @@
-// src/pages/ResourceListPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db, rtdb, auth } from "../firebase";
@@ -36,7 +35,15 @@ const ResourceListPage = () => {
         where("level", "==", level)
       );
       const snap = await getDocs(q);
-      setResources(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      const sorted = snap.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .sort((a, b) =>
+          a.title.localeCompare(b.title, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          })
+        );
+      setResources(sorted);
     };
     fetchResources();
   }, [instrument, level]);
@@ -69,7 +76,21 @@ const ResourceListPage = () => {
     return () => unsubs.forEach((u) => u());
   }, [resources, instrument]);
 
-  const handleToggle = (resId, field) => toggleField(instrument, resId, field);
+  const handleToggle = (resId, field) => {
+    const resInter = interactions[resId] || {};
+
+    if (field === "upvoted") {
+      if (resInter.downvoted) {
+        toggleField(instrument, resId, "downvoted");
+      }
+    } else if (field === "downvoted") {
+      if (resInter.upvoted) {
+        toggleField(instrument, resId, "upvoted");
+      }
+    }
+
+    toggleField(instrument, resId, field);
+  };
 
   const handlePostComment = (resId) => {
     const text = commentText[resId];
@@ -170,7 +191,9 @@ const ResourceListPage = () => {
                   }`}
                 >
                   <FaThumbsDown size={18} />
-                  <span className="text-sm">{countField(res.id, "downvoted")}</span>
+                  <span className="text-sm">
+                    {countField(res.id, "downvoted")}
+                  </span>
                 </button>
 
                 <button
@@ -184,7 +207,9 @@ const ResourceListPage = () => {
                   ) : (
                     <FaRegBookmark size={18} />
                   )}
-                  <span className="text-sm">{countField(res.id, "bookmarked")}</span>
+                  <span className="text-sm">
+                    {countField(res.id, "bookmarked")}
+                  </span>
                 </button>
 
                 <label className="inline-flex items-center gap-1 cursor-pointer text-gray-700 hover:scale-105 transition-transform">
@@ -212,14 +237,15 @@ const ResourceListPage = () => {
                 </button>
               </div>
 
-              {/* Comment Toggle */}
+              {/* Comments Section */}
               {isVisible && (
                 <div className="mt-5">
                   {comments.length > 0 ? (
                     <ul className="space-y-2 text-gray-800 mb-2">
                       {comments.map((c, idx) => (
                         <li key={idx}>
-                          <span className="font-semibold">{c.userName}:</span> {c.text}
+                          <span className="font-semibold">{c.userName}:</span>{" "}
+                          {c.text}
                         </li>
                       ))}
                     </ul>
