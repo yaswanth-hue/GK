@@ -5,7 +5,6 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { ref, onValue, push } from "firebase/database";
 import { toggleField } from "../lib/userInteractions";
 
-// Importing icons
 import {
   FaThumbsUp,
   FaThumbsDown,
@@ -63,32 +62,32 @@ const ResourceListPage = () => {
     return () => unsubAll();
   }, []);
 
+  // ✅ Optimized comment loading (batched)
   useEffect(() => {
-    const unsubs = resources.map((res) => {
+    const unsubs = [];
+    resources.forEach((res) => {
       const cRef = ref(rtdb, `comments/${instrument}/${res.id}`);
-      return onValue(cRef, (snap) => {
-        setCommentsMap((m) => ({
-          ...m,
-          [res.id]: snap.val() ? Object.values(snap.val()) : [],
+      const unsub = onValue(cRef, (snap) => {
+        const val = snap.val();
+        setCommentsMap((prev) => ({
+          ...prev,
+          [res.id]: val
+            ? Object.entries(val).map(([id, data]) => ({ id, ...data }))
+            : [],
         }));
       });
+      unsubs.push(unsub);
     });
     return () => unsubs.forEach((u) => u());
   }, [resources, instrument]);
 
   const handleToggle = (resId, field) => {
     const resInter = interactions[resId] || {};
-
-    if (field === "upvoted") {
-      if (resInter.downvoted) {
-        toggleField(instrument, resId, "downvoted");
-      }
-    } else if (field === "downvoted") {
-      if (resInter.upvoted) {
-        toggleField(instrument, resId, "upvoted");
-      }
+    if (field === "upvoted" && resInter.downvoted) {
+      toggleField(instrument, resId, "downvoted");
+    } else if (field === "downvoted" && resInter.upvoted) {
+      toggleField(instrument, resId, "upvoted");
     }
-
     toggleField(instrument, resId, field);
   };
 
@@ -132,7 +131,6 @@ const ResourceListPage = () => {
         <p className="text-lg text-gray-700">Pick your vibe and dive in 🎶</p>
       </div>
 
-      {/* Filter */}
       <div className="mb-6 flex justify-center">
         <select
           value={filterType}
@@ -148,7 +146,6 @@ const ResourceListPage = () => {
         </select>
       </div>
 
-      {/* Resources */}
       <div className="grid gap-6 max-w-4xl mx-auto">
         {filtered.map((res) => {
           const inter = interactions[res.id] || {};
@@ -158,7 +155,7 @@ const ResourceListPage = () => {
           return (
             <div
               key={res.id}
-              className="bg-white/60 backdrop-blur-lg p-6 rounded-3xl shadow-xl border border-purple-200 hover:shadow-2xl transition duration-300"
+              className="bg-white/60 backdrop-blur-lg p-6 rounded-3xl shadow-xl border border-purple-200 hover:shadow-2xl transition duration-300 will-change-transform"
             >
               <a
                 href={res.link}
@@ -172,11 +169,10 @@ const ResourceListPage = () => {
                 Type: {res.resourceType}
               </p>
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 mt-4 text-lg">
                 <button
                   onClick={() => handleToggle(res.id, "upvoted")}
-                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 ${
+                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 will-change-transform ${
                     inter.upvoted ? "text-blue-600" : "text-gray-700"
                   }`}
                 >
@@ -186,7 +182,7 @@ const ResourceListPage = () => {
 
                 <button
                   onClick={() => handleToggle(res.id, "downvoted")}
-                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 ${
+                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 will-change-transform ${
                     inter.downvoted ? "text-red-600" : "text-gray-700"
                   }`}
                 >
@@ -198,7 +194,7 @@ const ResourceListPage = () => {
 
                 <button
                   onClick={() => handleToggle(res.id, "bookmarked")}
-                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 ${
+                  className={`transition transform hover:scale-110 duration-150 flex items-center gap-1 will-change-transform ${
                     inter.bookmarked ? "text-yellow-500" : "text-gray-700"
                   }`}
                 >
@@ -212,7 +208,7 @@ const ResourceListPage = () => {
                   </span>
                 </button>
 
-                <label className="inline-flex items-center gap-1 cursor-pointer text-gray-700 hover:scale-105 transition-transform">
+                <label className="inline-flex items-center gap-1 cursor-pointer text-gray-700 hover:scale-105 transition-transform will-change-transform">
                   <BsFillCheckCircleFill
                     className={`${
                       inter.progress ? "text-green-500" : "text-gray-400"
@@ -230,20 +226,19 @@ const ResourceListPage = () => {
 
                 <button
                   onClick={() => toggleCommentsForResource(res.id)}
-                  className="transition transform hover:scale-110 duration-150 text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                  className="transition transform hover:scale-110 duration-150 text-blue-500 hover:text-blue-700 flex items-center gap-1 will-change-transform"
                 >
                   <MdComment size={20} />
                   <span className="text-sm">{comments.length}</span>
                 </button>
               </div>
 
-              {/* Comments Section */}
               {isVisible && (
                 <div className="mt-5">
                   {comments.length > 0 ? (
                     <ul className="space-y-2 text-gray-800 mb-2">
-                      {comments.map((c, idx) => (
-                        <li key={idx}>
+                      {comments.map((c) => (
+                        <li key={c.id}>
                           <span className="font-semibold">{c.userName}:</span>{" "}
                           {c.text}
                         </li>
