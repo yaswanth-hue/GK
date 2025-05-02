@@ -122,8 +122,8 @@ const ResourceListPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-8 font-sans">
-      {/* ✅ Fixed Logo like HomePage */}
-      <div className="fixed top-4 left-4 z-50">
+      {/* ✅ Updated: Logo is now relative and scrolls with the page */}
+      <div className="mb-6">
         <LogoWithText />
       </div>
 
