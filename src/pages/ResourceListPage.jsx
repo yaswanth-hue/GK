@@ -14,7 +14,7 @@ import { BsFillCheckCircleFill } from "react-icons/bs";
 import { MdComment } from "react-icons/md";
 import LogoWithText from "./LogoWithText"; // ✅ Import logo
 
-const types = ["video", "journal", "pdf", "course"];
+const types = ["Video", "Journal", "PDF", "Course"];
 
 const ResourceListPage = () => {
   const { instrument, level } = useParams();
