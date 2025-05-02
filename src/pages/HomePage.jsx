@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { HiOutlineMusicalNote } from "react-icons/hi2";
 import gsap from "gsap";
+import LogoWithText from "../pages/LogoWithText";
 
 // Import instrument images
 import drumsImg from "../assets/photos/drums.png";
@@ -56,15 +56,15 @@ const HomePage = () => {
       {/* Header */}
       <div
         ref={headerRef}
-        className="flex justify-between items-center mb-10 opacity-0 -translate-y-10"
+        className="flex justify-between items-center mb-10 opacity-0 -translate-y-10 w-full"
       >
-        <div className="flex items-center text-purple-800 drop-shadow-md">
-          <HiOutlineMusicalNote className="text-4xl mr-2 animate-pulse" />
-          <h1 className="text-3xl font-extrabold tracking-wide">InstruMentor</h1>
+        {/* Logo Section */}
+        <div className="cursor-pointer" onClick={() => navigate("/")}>
+          <LogoWithText />
         </div>
 
         {/* Button Section for Desktop */}
-        <div className="hidden sm:flex gap-4 flex-wrap justify-end mb-6">
+        <div className="hidden sm:flex gap-4 flex-wrap justify-end items-center">
           <button
             onClick={() => navigate("/add-resource")}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition"

@@ -13,6 +13,7 @@ import AddResource from "./pages/AddResource";
 import ManageResources from "./pages/ManageResources";
 import InstrumentPage from "./pages/InstrumentPage";
 import ResourceListPage from "./pages/ResourceListPage";
+// import Header from "./pages/LogoWithText";
 
 function App() {
   const [user, setUser] = useState(null);

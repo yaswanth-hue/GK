@@ -1,6 +1,7 @@
 // src/pages/InstrumentPage.jsx
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import LogoWithText from "./LogoWithText"; // Import the logo component
 
 const levels = ["beginner", "intermediate", "advanced"];
 
@@ -10,7 +11,12 @@ const InstrumentPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-200 via-pink-100 to-yellow-50 p-6 font-sans">
-      <div className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl p-10 max-w-lg w-full border border-white/40">
+      {/* Fixed Logo at Top Left like HomePage */}
+      <div className="fixed top-4 left-4 z-50">
+        <LogoWithText />
+      </div>
+
+      <div className="bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl p-10 max-w-lg w-full border border-white/40 mt-10">
         <h2 className="text-4xl font-extrabold text-fuchsia-700 mb-6 drop-shadow-md tracking-wide">
           {instrument.charAt(0).toUpperCase() + instrument.slice(1)}
         </h2>

@@ -4,7 +4,6 @@ import { db, rtdb, auth } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { ref, onValue, push } from "firebase/database";
 import { toggleField } from "../lib/userInteractions";
-
 import {
   FaThumbsUp,
   FaThumbsDown,
@@ -13,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { MdComment } from "react-icons/md";
+import LogoWithText from "./LogoWithText"; // ✅ Import logo
 
 const types = ["video", "journal", "pdf", "course"];
 
@@ -62,7 +62,6 @@ const ResourceListPage = () => {
     return () => unsubAll();
   }, []);
 
-  // ✅ Optimized comment loading (batched)
   useEffect(() => {
     const unsubs = [];
     resources.forEach((res) => {
@@ -123,6 +122,11 @@ const ResourceListPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-8 font-sans">
+      {/* ✅ Fixed Logo like HomePage */}
+      <div className="fixed top-4 left-4 z-50">
+        <LogoWithText />
+      </div>
+
       <div className="text-center mb-10">
         <h2 className="text-4xl font-bold text-purple-700 drop-shadow-md mb-2">
           {instrument.charAt(0).toUpperCase() + instrument.slice(1)} —{" "}
