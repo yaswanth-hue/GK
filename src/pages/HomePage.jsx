@@ -62,26 +62,28 @@ const HomePage = () => {
           <HiOutlineMusicalNote className="text-4xl mr-2 animate-pulse" />
           <h1 className="text-3xl font-extrabold tracking-wide">InstruMentor</h1>
         </div>
-        <div className="flex gap-4 flex-wrap justify-center md:justify-start w-full md:w-auto">
-          <button
-            onClick={() => navigate("/add-resource")}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full md:w-auto mb-2 md:mb-0"
-          >
-            + Add Resource
-          </button>
-          <button
-            onClick={() => navigate("/manage-resources")}
-            className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full md:w-auto mb-2 md:mb-0"
-          >
-            Manage Resources
-          </button>
-          <button
-            onClick={() => navigate("/profile")}
-            className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full md:w-auto"
-          >
-            Profile
-          </button>
-        </div>
+      </div>
+
+      {/* Button Section */}
+      <div className="flex gap-4 flex-wrap justify-center mb-6">
+        <button
+          onClick={() => navigate("/add-resource")}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full sm:w-auto mb-2 sm:mb-0"
+        >
+          + Add Resource
+        </button>
+        <button
+          onClick={() => navigate("/manage-resources")}
+          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full sm:w-auto mb-2 sm:mb-0"
+        >
+          Manage Resources
+        </button>
+        <button
+          onClick={() => navigate("/profile")}
+          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full sm:w-auto"
+        >
+          Profile
+        </button>
       </div>
 
       {/* Instrument Grid */}
