@@ -89,7 +89,7 @@ const HomePage = () => {
         <h2 className="text-3xl font-extrabold text-purple-700 mb-6">
           🎵 Choose Your Instrument
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {instruments.map((instrument, index) => (
             <div
               key={instrument.name}
@@ -97,7 +97,7 @@ const HomePage = () => {
               className="opacity-0 translate-y-6 bg-white bg-opacity-70 backdrop-blur-md rounded-2xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer transform hover:scale-[1.02]"
               onClick={() => navigate(`/instrument/${instrument.name}`)}
             >
-              <div className="bg-purple-100 h-40 flex items-center justify-center rounded-t-2xl overflow-hidden">
+              <div className="bg-purple-100 h-40 sm:h-48 md:h-56 lg:h-64 flex items-center justify-center rounded-t-2xl overflow-hidden">
                 <img
                   src={instrument.image}
                   alt={instrument.name}
