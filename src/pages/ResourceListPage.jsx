@@ -12,7 +12,8 @@ import {
 } from "react-icons/fa";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { MdComment } from "react-icons/md";
-import LogoWithText from "./LogoWithText"; // ✅ Import logo
+import { Link } from "react-router-dom";
+import LogoWithText from "./LogoWithText";
 
 const types = ["video", "journal", "pdf", "course"];
 
@@ -26,27 +27,54 @@ const ResourceListPage = () => {
   const [commentText, setCommentText] = useState({});
   const [showComments, setShowComments] = useState({});
 
+  // Fetching resources from Firestore
   useEffect(() => {
     const fetchResources = async () => {
-      const q = query(
-        collection(db, "resources"),
-        where("instrument", "==", instrument),
-        where("level", "==", level)
-      );
-      const snap = await getDocs(q);
-      const sorted = snap.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) =>
-          a.title.localeCompare(b.title, undefined, {
-            numeric: true,
-            sensitivity: "base",
-          })
+      try {
+        // Ensure instrument and level are valid strings
+        const instrumentKey = instrument?.toLowerCase();
+        const levelKey = level?.toLowerCase();
+
+        if (!instrumentKey || !levelKey) {
+          console.error("Invalid instrument or level parameters.");
+          return;
+        }
+
+        console.log("Querying resources with:", instrumentKey, levelKey);
+
+        const q = query(
+          collection(db, "resources"),
+          where("instrument", "==", instrumentKey),
+          where("level", "==", levelKey)
         );
-      setResources(sorted);
+
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          console.warn("No matching resources found for:", instrumentKey, levelKey);
+          setResources([]);
+          return;
+        }
+
+        const sorted = snap.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) =>
+            a.title.localeCompare(b.title, undefined, {
+              numeric: true,
+              sensitivity: "base",
+            })
+          );
+
+        setResources(sorted);
+      } catch (err) {
+        console.error("Error fetching resources:", err);
+      }
     };
+
     fetchResources();
   }, [instrument, level]);
 
+  // Fetch user interactions
   useEffect(() => {
     const path = `userInteractions/${auth.currentUser.uid}/${instrument}`;
     const unsub = onValue(ref(rtdb, path), (snap) => {
@@ -55,6 +83,7 @@ const ResourceListPage = () => {
     return () => unsub();
   }, [instrument]);
 
+  // Fetch all user interactions
   useEffect(() => {
     const unsubAll = onValue(ref(rtdb, "userInteractions"), (snap) => {
       setAllInteractions(snap.val() || {});
@@ -62,6 +91,7 @@ const ResourceListPage = () => {
     return () => unsubAll();
   }, []);
 
+  // Fetch comments for each resource
   useEffect(() => {
     const unsubs = [];
     resources.forEach((res) => {
@@ -80,6 +110,7 @@ const ResourceListPage = () => {
     return () => unsubs.forEach((u) => u());
   }, [resources, instrument]);
 
+  // Toggle interactions (upvote/downvote/bookmark)
   const handleToggle = (resId, field) => {
     const resInter = interactions[resId] || {};
     if (field === "upvoted" && resInter.downvoted) {
@@ -90,6 +121,7 @@ const ResourceListPage = () => {
     toggleField(instrument, resId, field);
   };
 
+  // Post a new comment
   const handlePostComment = (resId) => {
     const text = commentText[resId];
     if (!text) return;
@@ -102,10 +134,12 @@ const ResourceListPage = () => {
     setCommentText((m) => ({ ...m, [resId]: "" }));
   };
 
+  // Toggle comments visibility for a resource
   const toggleCommentsForResource = (resId) => {
     setShowComments((prev) => ({ ...prev, [resId]: !prev[resId] }));
   };
 
+  // Count upvotes, downvotes, or bookmarks for a resource
   const countField = (resId, field) => {
     let count = 0;
     Object.values(allInteractions).forEach((userMap) => {
@@ -115,6 +149,7 @@ const ResourceListPage = () => {
     return count;
   };
 
+  // Filter resources based on selected filter type
   const filtered =
     filterType === "all"
       ? resources
@@ -122,9 +157,10 @@ const ResourceListPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-8 font-sans">
-      {/* ✅ Updated: Logo is now relative and scrolls with the page */}
-      <div className="mb-6">
-        <LogoWithText />
+      <div className="mb-6 w-fit">
+        <Link to="/" className="inline-block">
+          <LogoWithText />
+        </Link>
       </div>
 
       <div className="text-center mb-10">
