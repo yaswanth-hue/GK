@@ -15,7 +15,7 @@ import { MdComment } from "react-icons/md";
 import { Link } from "react-router-dom";
 import LogoWithText from "./LogoWithText";
 
-const types = ["video", "journal", "pdf", "course"];
+const types = ["Video", "Journal", "PDF", "Course"];
 
 const ResourceListPage = () => {
   const { instrument, level } = useParams();
