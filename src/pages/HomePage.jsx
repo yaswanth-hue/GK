@@ -15,8 +15,8 @@ import violinImg from "../assets/photos/violin.png";
 
 // Import audio files
 import drumsAudio from "../assets/audio/drums.mp3";
-import fluteAudio from "../assets/audio/flute.wav";
-import guitarAudio from "../assets/audio/guitar.wav";
+import fluteAudio from "../assets/audio/flute.mp3";
+import guitarAudio from "../assets/audio/guitar.mp3";
 import tablaAudio from "../assets/audio/tabla.wav";
 import harmoniumAudio from "../assets/audio/harmonium.wav";
 import saxophoneAudio from "../assets/audio/saxophone.wav";
