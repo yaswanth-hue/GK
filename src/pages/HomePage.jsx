@@ -14,7 +14,7 @@ import keyboardImg from "../assets/photos/keyboard.png";
 import violinImg from "../assets/photos/violin.png";
 
 // Import audio files
-import drumsAudio from "../assets/audio/drums.wav";
+import drumsAudio from "../assets/audio/drums.mp3";
 import fluteAudio from "../assets/audio/flute.wav";
 import guitarAudio from "../assets/audio/guitar.wav";
 import tablaAudio from "../assets/audio/tabla.wav";
