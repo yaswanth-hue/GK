@@ -9,7 +9,11 @@ import {
   where,
   updateDoc,
 } from "firebase/firestore";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import { auth, db, rtdb, storage } from "../firebase";
 import { signOut, updateProfile } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -24,11 +28,18 @@ import {
   MessageCircle,
   Camera,
   User,
+  Home,
 } from "lucide-react";
 
 const instruments = [
-  "drums", "flute", "guitar", "tabla", "harmonium",
-  "saxophone", "keyboard", "violin"
+  "drums",
+  "flute",
+  "guitar",
+  "tabla",
+  "harmonium",
+  "saxophone",
+  "keyboard",
+  "violin",
 ];
 
 const ProfilePage = () => {
@@ -43,13 +54,11 @@ const ProfilePage = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Updated signOut handler: After sign out, wait briefly then navigate to the root ("/")
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      // Adding a slight delay to ensure auth state has updated
       setTimeout(() => {
-        navigate("/"); // Redirect to landing page ("/")
+        navigate("/");
       }, 100);
     } catch (error) {
       console.error("Sign out failed:", error);
@@ -65,11 +74,9 @@ const ProfilePage = () => {
   }, [uid]);
 
   useEffect(() => {
-    // Fetch user profile pic
     if (auth.currentUser?.photoURL) {
       setProfilePic(auth.currentUser.photoURL);
     } else {
-      // Check if we have it stored in Firestore
       const fetchProfilePic = async () => {
         try {
           const userDoc = await getDoc(doc(db, "users", uid));
@@ -80,7 +87,6 @@ const ProfilePage = () => {
           console.error("Error fetching profile pic:", error);
         }
       };
-      
       if (uid) fetchProfilePic();
     }
   }, [uid]);
@@ -89,13 +95,17 @@ const ProfilePage = () => {
     const fetchAll = async () => {
       const grouped = {};
       for (const inst of instruments) {
-        const q = query(collection(db, "resources"), where("instrument", "==", inst));
+        const q = query(
+          collection(db, "resources"),
+          where("instrument", "==", inst)
+        );
         const snap = await getDocs(q);
         const byLevel = { beginner: [], intermediate: [], advanced: [] };
         snap.forEach((d) => {
           const data = d.data();
           const lvl = data.level.toLowerCase();
-          if (byLevel[lvl]) byLevel[lvl].push({ id: d.id, ...data });
+          if (byLevel[lvl])
+            byLevel[lvl].push({ id: d.id, ...data });
         });
         grouped[inst] = byLevel;
       }
@@ -166,9 +176,9 @@ const ProfilePage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      alert('Please select an image file (JPEG, PNG, or GIF)');
+      alert("Please select an image file (JPEG, PNG, or GIF)");
       return;
     }
 
@@ -176,19 +186,13 @@ const ProfilePage = () => {
       setUploading(true);
       const imageRef = storageRef(storage, "profilePics/" + uid);
       await uploadBytes(imageRef, file);
-      
       const downloadUrl = await getDownloadURL(imageRef);
-      
-      // Update user profile in Auth
       await updateProfile(auth.currentUser, {
-        photoURL: downloadUrl
+        photoURL: downloadUrl,
       });
-      
-      // Also store in Firestore for backup
       await updateDoc(doc(db, "users", uid), {
-        profilePic: downloadUrl
+        profilePic: downloadUrl,
       });
-      
       setProfilePic(downloadUrl);
     } catch (error) {
       console.error("Error uploading profile picture:", error);
@@ -245,7 +249,9 @@ const ProfilePage = () => {
         ) : (
           Object.entries(data).map(([inst, items]) => (
             <div key={inst} className="mb-5">
-              <h3 className="text-lg text-purple-700 font-medium capitalize mb-3">{inst}</h3>
+              <h3 className="text-lg text-purple-700 font-medium capitalize mb-3">
+                {inst}
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {items.map((res) => (
                   <div key={res.id}>{renderResourceCard(res)}</div>
@@ -259,24 +265,27 @@ const ProfilePage = () => {
   };
 
   const renderProgress = () => {
-    const completedCounts = instruments.map((inst) => {
-      const resMap = interactions[inst] || {};
-      const total = Object.values(allResources[inst] || {}).reduce(
-        (sum, arr) => sum + arr.length, 0
-      );
-      const completedIds = Object.entries(resMap)
-        .filter(([, d]) => d.progress)
-        .map(([resId]) => resId);
-      const completedCount = completedIds.length;
-      const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+    const completedCounts = instruments
+      .map((inst) => {
+        const resMap = interactions[inst] || {};
+        const total = Object.values(allResources[inst] || {}).reduce(
+          (sum, arr) => sum + arr.length,
+          0
+        );
+        const completedIds = Object.entries(resMap)
+          .filter(([, d]) => d.progress)
+          .map(([resId]) => resId);
+        const completedCount = completedIds.length;
+        const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
-      return {
-        instrument: inst,
-        completed: completedCount,
-        total,
-        percent
-      };
-    }).filter(item => item.total > 0);
+        return {
+          instrument: inst,
+          completed: completedCount,
+          total,
+          percent,
+        };
+      })
+      .filter((item) => item.total > 0);
 
     return (
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -288,7 +297,9 @@ const ProfilePage = () => {
           {completedCounts.map((item) => (
             <div key={item.instrument} className="mb-4">
               <div className="flex justify-between mb-1">
-                <span className="capitalize text-gray-700 font-medium">{item.instrument}</span>
+                <span className="capitalize text-gray-700 font-medium">
+                  {item.instrument}
+                </span>
                 <span className="text-gray-600">{item.percent}%</span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full">
@@ -332,15 +343,30 @@ const ProfilePage = () => {
               <h3 className="text-lg text-purple-700 capitalize mb-3">{inst}</h3>
               {Object.entries(levelsMap).map(([lvl, comments]) => (
                 <div key={lvl} className="mb-4">
-                  <h4 className="capitalize text-gray-600 font-medium mb-2">{lvl}</h4>
+                  <h4 className="capitalize text-gray-600 font-medium mb-2">
+                    {lvl}
+                  </h4>
                   <div className="space-y-3">
                     {comments.map((c) => (
-                      <div key={c.commentId} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                      <div
+                        key={c.commentId}
+                        className="bg-gray-50 p-3 rounded-lg border border-gray-100"
+                      >
                         <div className="flex justify-between">
                           <div className="text-gray-800">{c.text}</div>
                           <button
                             onClick={() =>
-                              remove(ref(rtdb, "comments/" + c.instrument + "/" + c.resId + "/" + c.commentId))
+                              remove(
+                                ref(
+                                  rtdb,
+                                  "comments/" +
+                                    c.instrument +
+                                    "/" +
+                                    c.resId +
+                                    "/" +
+                                    c.commentId
+                                )
+                              )
                             }
                             className="text-red-500 text-sm hover:text-red-700 ml-3"
                           >
@@ -370,15 +396,14 @@ const ProfilePage = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div className="flex items-center mb-4 md:mb-0">
               <div className="relative">
-                {/* Profile pic */}
-                <div 
+                <div
                   className="bg-white h-20 w-20 rounded-full flex items-center justify-center mr-5 overflow-hidden cursor-pointer group relative"
                   onClick={handleProfilePicClick}
                 >
                   {profilePic ? (
-                    <img 
-                      src={profilePic} 
-                      alt="Profile" 
+                    <img
+                      src={profilePic}
+                      alt="Profile"
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -388,11 +413,11 @@ const ProfilePage = () => {
                     <Camera className="text-white opacity-0 group-hover:opacity-100 h-8 w-8" />
                   </div>
                 </div>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  accept="image/*" 
-                  className="hidden" 
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  className="hidden"
                   onChange={handleFileChange}
                 />
                 {uploading && (
@@ -403,32 +428,68 @@ const ProfilePage = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">
-                  {auth.currentUser?.displayName || auth.currentUser?.email || "Music Enthusiast"}
+                  {auth.currentUser?.displayName ||
+                    auth.currentUser?.email ||
+                    "Music Enthusiast"}
                 </h1>
                 <p className="text-purple-200">
-                  Joined {new Date(auth.currentUser?.metadata?.creationTime).toLocaleDateString()}
+                  Joined{" "}
+                  {new Date(
+                    auth.currentUser?.metadata?.creationTime
+                  ).toLocaleDateString()}
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="bg-white text-purple-700 hover:bg-gray-100 px-4 py-2 rounded-lg shadow font-medium"
-            >
-              Sign Out
-            </button>
+
+            {/* Back + Sign Out Buttons */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => navigate("/")}
+                className="bg-white text-purple-700 hover:bg-gray-100 px-4 py-2 rounded-lg shadow font-medium flex items-center"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Back to Home
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="bg-white text-purple-700 hover:bg-gray-100 px-4 py-2 rounded-lg shadow font-medium"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Tabs and Content */}
       <div className="max-w-6xl mx-auto py-8 px-6">
         <div className="flex mb-6 overflow-x-auto">
           {[
-            { key: "bookmarked", label: "Bookmarked", icon: <Bookmark className="w-4 h-4 mr-2" /> },
-            { key: "upvoted", label: "Upvoted", icon: <ThumbsUp className="w-4 h-4 mr-2" /> },
-            { key: "downvoted", label: "Downvoted", icon: <ThumbsDown className="w-4 h-4 mr-2" /> },
-            { key: "progress", label: "Progress", icon: <BarChart2 className="w-4 h-4 mr-2" /> },
-            { key: "comments", label: "Comments", icon: <MessageCircle className="w-4 h-4 mr-2" /> },
+            {
+              key: "bookmarked",
+              label: "Bookmarked",
+              icon: <Bookmark className="w-4 h-4 mr-2" />,
+            },
+            {
+              key: "upvoted",
+              label: "Upvoted",
+              icon: <ThumbsUp className="w-4 h-4 mr-2" />,
+            },
+            {
+              key: "downvoted",
+              label: "Downvoted",
+              icon: <ThumbsDown className="w-4 h-4 mr-2" />,
+            },
+            {
+              key: "progress",
+              label: "Progress",
+              icon: <BarChart2 className="w-4 h-4 mr-2" />,
+            },
+            {
+              key: "comments",
+              label: "Comments",
+              icon: <MessageCircle className="w-4 h-4 mr-2" />,
+            },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -445,9 +506,24 @@ const ProfilePage = () => {
           ))}
         </div>
 
-        {activeTab === "bookmarked" && renderResourceSection("Bookmarked Resources", getFiltered("bookmarked"), <Bookmark className="w-5 h-5" />)}
-        {activeTab === "upvoted" && renderResourceSection("Upvoted Resources", getFiltered("upvoted"), <ThumbsUp className="w-5 h-5" />)}
-        {activeTab === "downvoted" && renderResourceSection("Downvoted Resources", getFiltered("downvoted"), <ThumbsDown className="w-5 h-5" />)}
+        {activeTab === "bookmarked" &&
+          renderResourceSection(
+            "Bookmarked Resources",
+            getFiltered("bookmarked"),
+            <Bookmark className="w-5 h-5" />
+          )}
+        {activeTab === "upvoted" &&
+          renderResourceSection(
+            "Upvoted Resources",
+            getFiltered("upvoted"),
+            <ThumbsUp className="w-5 h-5" />
+          )}
+        {activeTab === "downvoted" &&
+          renderResourceSection(
+            "Downvoted Resources",
+            getFiltered("downvoted"),
+            <ThumbsDown className="w-5 h-5" />
+          )}
         {activeTab === "progress" && renderProgress()}
         {activeTab === "comments" && renderComments()}
       </div>

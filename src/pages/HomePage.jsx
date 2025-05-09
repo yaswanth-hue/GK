@@ -13,16 +13,51 @@ import saxophoneImg from "../assets/photos/saxophone.png";
 import keyboardImg from "../assets/photos/keyboard.png";
 import violinImg from "../assets/photos/violin.png";
 
-// Array of instruments with images
+// Array of instruments with images and virtual instrument links
 const instruments = [
-  { name: "drums", image: drumsImg },
-  { name: "flute", image: fluteImg },
-  { name: "guitar", image: guitarImg },
-  { name: "tabla", image: tablaImg },
-  { name: "harmonium", image: harmoniumImg },
-  { name: "saxophone", image: saxophoneImg },
-  { name: "keyboard", image: keyboardImg },
-  { name: "violin", image: violinImg },
+  {
+    name: "drums",
+    image: drumsImg,
+    virtualLink:
+      "https://www.sessiontown.com/en/music-games-apps/virtual-instrument-play-drums-online",
+  },
+  {
+    name: "flute",
+    image: fluteImg,
+    virtualLink: "https://www.virtualmusicalinstruments.com/flute",
+  },
+  {
+    name: "guitar",
+    image: guitarImg,
+    virtualLink: "https://www.musicca.com/guitar",
+  },
+  {
+    name: "tabla",
+    image: tablaImg,
+    virtualLink: "https://artiumacademy.com/tools/tabla",
+  },
+  {
+    name: "harmonium",
+    image: harmoniumImg,
+    virtualLink: "https://music-tools.spardhaschoolofmusic.com/harmonium",
+  },
+  {
+    name: "saxophone",
+    image: saxophoneImg,
+    virtualLink: "https://www.trumpetfingering.com/virtual-saxophone",
+  },
+  {
+    name: "keyboard",
+    image: keyboardImg,
+    virtualLink:
+      "https://www.sessiontown.com/en/music-games-apps/online-virtual-keyboard-piano",
+  },
+  {
+    name: "violin",
+    image: violinImg,
+    virtualLink:
+      "https://www.ecarddesignanimation.com/home/violin_html5.php",
+  },
 ];
 
 const HomePage = () => {
@@ -128,15 +163,24 @@ const HomePage = () => {
                   className="h-full object-contain p-4"
                 />
               </div>
-              <div className="p-5">
+              <div className="p-5" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-lg font-semibold capitalize text-gray-800 mb-2">
                   {instrument.name}
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Explore resources and start learning
                 </p>
-                <button className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all">
+                <button
+                  className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all mb-2"
+                  onClick={() => navigate(`/instrument/${instrument.name}`)}
+                >
                   Start Learning
+                </button>
+                <button
+                  className="w-full bg-white text-purple-700 border border-purple-600 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all"
+                  onClick={() => window.open(instrument.virtualLink, "_blank")}
+                >
+                  Virtual Instrument
                 </button>
               </div>
             </div>
