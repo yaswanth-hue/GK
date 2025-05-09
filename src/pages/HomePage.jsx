@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import LogoWithText from "../pages/LogoWithText";
@@ -13,50 +13,67 @@ import saxophoneImg from "../assets/photos/saxophone.png";
 import keyboardImg from "../assets/photos/keyboard.png";
 import violinImg from "../assets/photos/violin.png";
 
-// Array of instruments with images and virtual instrument links
+// Import audio files
+import drumsAudio from "../assets/audio/drums.wav";
+import fluteAudio from "../assets/audio/flute.wav";
+import guitarAudio from "../assets/audio/guitar.wav";
+import tablaAudio from "../assets/audio/tabla.wav";
+import harmoniumAudio from "../assets/audio/harmonium.wav";
+import saxophoneAudio from "../assets/audio/saxophone.wav";
+import keyboardAudio from "../assets/audio/keyboard.wav";
+import violinAudio from "../assets/audio/violin.mp3";
+
+// Array of instruments with images and audio paths
 const instruments = [
   {
     name: "drums",
     image: drumsImg,
     virtualLink:
       "https://www.sessiontown.com/en/music-games-apps/virtual-instrument-play-drums-online",
+    audio: drumsAudio,
   },
   {
     name: "flute",
     image: fluteImg,
     virtualLink: "https://www.virtualmusicalinstruments.com/flute",
+    audio: fluteAudio,
   },
   {
     name: "guitar",
     image: guitarImg,
     virtualLink: "https://www.musicca.com/guitar",
+    audio: guitarAudio,
   },
   {
     name: "tabla",
     image: tablaImg,
     virtualLink: "https://artiumacademy.com/tools/tabla",
+    audio: tablaAudio,
   },
   {
     name: "harmonium",
     image: harmoniumImg,
     virtualLink: "https://music-tools.spardhaschoolofmusic.com/harmonium",
+    audio: harmoniumAudio,
   },
   {
     name: "saxophone",
     image: saxophoneImg,
     virtualLink: "https://www.trumpetfingering.com/virtual-saxophone",
+    audio: saxophoneAudio,
   },
   {
     name: "keyboard",
     image: keyboardImg,
     virtualLink:
       "https://www.sessiontown.com/en/music-games-apps/online-virtual-keyboard-piano",
+    audio: keyboardAudio,
   },
   {
     name: "violin",
     image: violinImg,
-    virtualLink:
-      "https://www.ecarddesignanimation.com/home/violin_html5.php",
+    virtualLink: "https://www.ecarddesignanimation.com/home/violin_html5.php",
+    audio: violinAudio,
   },
 ];
 
@@ -64,26 +81,49 @@ const HomePage = () => {
   const navigate = useNavigate();
   const headerRef = useRef(null);
   const cardRefs = useRef([]);
+  const audioRefs = useRef({}); // Lazily created audio elements
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(headerRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out",
-      });
+    cardRefs.current = cardRefs.current.slice(0, instruments.length);
 
-      gsap.to(cardRefs.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power2.out",
-      });
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { autoAlpha: 0, y: -20 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          force3D: true,
+        }
+      );
+
+      gsap.fromTo(
+        cardRefs.current,
+        { autoAlpha: 0, y: 24 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          force3D: true,
+        }
+      );
     });
 
     return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    // Stop all audio on component unmount
+    return () => {
+      Object.values(audioRefs.current).forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    };
   }, []);
 
   return (
@@ -93,12 +133,11 @@ const HomePage = () => {
         ref={headerRef}
         className="flex justify-between items-center mb-10 opacity-0 -translate-y-10 w-full"
       >
-        {/* Logo Section */}
         <div className="cursor-pointer" onClick={() => navigate("/")}>
           <LogoWithText />
         </div>
 
-        {/* Button Section for Desktop */}
+        {/* Desktop Buttons */}
         <div className="hidden sm:flex gap-4 flex-wrap justify-end items-center">
           <button
             onClick={() => navigate("/add-resource")}
@@ -121,23 +160,23 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Button Section for Mobile */}
+      {/* Mobile Buttons */}
       <div className="flex gap-4 flex-wrap justify-center mb-6 sm:hidden">
         <button
           onClick={() => navigate("/add-resource")}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full sm:w-auto mb-2 sm:mb-0"
+          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full"
         >
           + Add Resource
         </button>
         <button
           onClick={() => navigate("/manage-resources")}
-          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full sm:w-auto mb-2 sm:mb-0"
+          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full"
         >
           Manage Resources
         </button>
         <button
           onClick={() => navigate("/profile")}
-          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full sm:w-auto"
+          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full"
         >
           Profile
         </button>
@@ -149,42 +188,67 @@ const HomePage = () => {
           🎵 Choose Your Instrument
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {instruments.map((instrument, index) => (
-            <div
-              key={instrument.name}
-              ref={(el) => (cardRefs.current[index] = el)}
-              className="opacity-0 translate-y-6 bg-white bg-opacity-70 backdrop-blur-md rounded-2xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer transform hover:scale-[1.02]"
-              onClick={() => navigate(`/instrument/${instrument.name}`)}
-            >
-              <div className="bg-purple-100 h-40 sm:h-48 md:h-56 lg:h-64 flex items-center justify-center rounded-t-2xl overflow-hidden">
-                <img
-                  src={instrument.image}
-                  alt={instrument.name}
-                  className="h-full object-contain p-4"
-                />
+          {instruments.map((instrument, index) => {
+            const handleMouseEnter = () => {
+              if (!audioRefs.current[instrument.name]) {
+                const audio = new Audio(instrument.audio);
+                audio.preload = "auto";
+                audioRefs.current[instrument.name] = audio;
+              }
+              const audio = audioRefs.current[instrument.name];
+              audio.currentTime = 0;
+              audio.play().catch(() => {});
+            };
+
+            const handleMouseLeave = () => {
+              const audio = audioRefs.current[instrument.name];
+              if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+              }
+            };
+
+            return (
+              <div
+                key={instrument.name}
+                ref={(el) => (cardRefs.current[index] = el)}
+                className="opacity-0 translate-y-6 bg-white bg-opacity-70 backdrop-blur-md rounded-2xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer transform hover:scale-[1.02]"
+                onClick={() => navigate(`/instrument/${instrument.name}`)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="bg-purple-100 h-40 sm:h-48 md:h-56 lg:h-64 flex items-center justify-center rounded-t-2xl overflow-hidden">
+                  <img
+                    src={instrument.image}
+                    alt={instrument.name}
+                    className="h-full object-contain p-4"
+                  />
+                </div>
+                <div className="p-5" onClick={(e) => e.stopPropagation()}>
+                  <h3 className="text-lg font-semibold capitalize text-gray-800 mb-2">
+                    {instrument.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Explore resources and start learning
+                  </p>
+                  <button
+                    className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all mb-2"
+                    onClick={() => navigate(`/instrument/${instrument.name}`)}
+                  >
+                    Start Learning
+                  </button>
+                  <button
+                    className="w-full bg-white text-purple-700 border border-purple-600 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all"
+                    onClick={() =>
+                      window.open(instrument.virtualLink, "_blank")
+                    }
+                  >
+                    Virtual Instrument
+                  </button>
+                </div>
               </div>
-              <div className="p-5" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-lg font-semibold capitalize text-gray-800 mb-2">
-                  {instrument.name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Explore resources and start learning
-                </p>
-                <button
-                  className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all mb-2"
-                  onClick={() => navigate(`/instrument/${instrument.name}`)}
-                >
-                  Start Learning
-                </button>
-                <button
-                  className="w-full bg-white text-purple-700 border border-purple-600 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all"
-                  onClick={() => window.open(instrument.virtualLink, "_blank")}
-                >
-                  Virtual Instrument
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
