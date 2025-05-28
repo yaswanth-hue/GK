@@ -157,6 +157,13 @@ const HomePage = () => {
           >
             Profile
           </button>
+          {/* New Audio Rooms button */}
+          <button
+            onClick={() => navigate("/audio-rooms")}
+            className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow"
+          >
+            Audio Rooms
+          </button>
         </div>
       </div>
 
@@ -179,6 +186,13 @@ const HomePage = () => {
           className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full"
         >
           Profile
+        </button>
+        {/* New Audio Rooms button for mobile */}
+        <button
+          onClick={() => navigate("/audio-rooms")}
+          className="bg-white border border-purple-600 text-purple-700 hover:bg-purple-50 font-medium px-4 py-2 rounded-lg shadow w-full"
+        >
+          Audio Rooms
         </button>
       </div>
 
@@ -232,18 +246,15 @@ const HomePage = () => {
                     Explore resources and start learning
                   </p>
                   <button
-                    className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all mb-2"
-                    onClick={() => navigate(`/instrument/${instrument.name}`)}
-                  >
-                    Start Learning
-                  </button>
-                  <button
-                    className="w-full bg-white text-purple-700 border border-purple-600 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all"
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg shadow transition"
                     onClick={() =>
-                      window.open(instrument.virtualLink, "_blank")
+                      window.open(
+                        instrument.virtualLink,
+                        "_blank"
+                      )
                     }
                   >
-                    Virtual Instrument
+                    Try Virtual {instrument.name.charAt(0).toUpperCase() + instrument.name.slice(1)}
                   </button>
                 </div>
               </div>
