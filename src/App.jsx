@@ -13,9 +13,6 @@ import AddResource from "./pages/AddResource";
 import ManageResources from "./pages/ManageResources";
 import InstrumentPage from "./pages/InstrumentPage";
 import ResourceListPage from "./pages/ResourceListPage";
-import AudioRoom from './components/AudioRoom';
-import AudioRoomList from './components/AudioRoomList';
-
 // import Header from "./pages/LogoWithText";
 
 function App() {
@@ -37,7 +34,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Root route: Landing page for guests, home for logged-in users */}
+        {/* Root route */}
         <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/home" />} />
 
         {/* Public routes */}
@@ -56,7 +53,11 @@ function App() {
         <Route path="/audio-rooms" element={user ? <AudioRoomList /> : <Navigate to="/login" />} />
         <Route path="/audio-room/:roomId" element={user ? <AudioRoom /> : <Navigate to="/login" />} />
 
-        {/* Catch-all fallback */}
+        {/* Audio Rooms routes */}
+        <Route path="/audio-rooms" element={user ? <AudioRoomsListPage /> : <Navigate to="/login" />} /> {/* Rooms list */}
+        <Route path="/audio-rooms/:roomId" element={user ? <AudioRoomPage /> : <Navigate to="/login" />} /> {/* Specific room */}
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
