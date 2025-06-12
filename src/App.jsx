@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
@@ -13,6 +13,9 @@ import AddResource from "./pages/AddResource";
 import ManageResources from "./pages/ManageResources";
 import InstrumentPage from "./pages/InstrumentPage";
 import ResourceListPage from "./pages/ResourceListPage";
+import AudioRoom from './components/AudioRoom';
+import AudioRoomList from './components/AudioRoomList';
+
 // import Header from "./pages/LogoWithText";
 
 function App() {
@@ -38,8 +41,8 @@ function App() {
         <Route path="/" element={!user ? <LandingPage /> : <Navigate to="/home" />} />
 
         {/* Public routes */}
-        <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/home" />} />
-        <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/home" />} />
+        <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/signup" />} />
 
         {/* Protected routes */}
         <Route path="/home" element={user ? <HomePage /> : <Navigate to="/login" />} />
@@ -48,6 +51,10 @@ function App() {
         <Route path="/manage-resources" element={user ? <ManageResources /> : <Navigate to="/login" />} />
         <Route path="/instrument/:instrument" element={user ? <InstrumentPage /> : <Navigate to="/login" />} />
         <Route path="/instrument/:instrument/:level" element={user ? <ResourceListPage /> : <Navigate to="/login" />} />
+        
+        {/* Audio Room routes */}
+        <Route path="/audio-rooms" element={user ? <AudioRoomList /> : <Navigate to="/login" />} />
+        <Route path="/audio-room/:roomId" element={user ? <AudioRoom /> : <Navigate to="/login" />} />
 
         {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -140,6 +140,12 @@ const HomePage = () => {
         {/* Desktop Buttons */}
         <div className="hidden sm:flex gap-4 flex-wrap justify-end items-center">
           <button
+            onClick={() => navigate("/audio-rooms")}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+          >
+            🎤 Join Audio Room
+          </button>
+          <button
             onClick={() => navigate("/add-resource")}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
           >
@@ -162,6 +168,12 @@ const HomePage = () => {
 
       {/* Mobile Buttons */}
       <div className="flex gap-4 flex-wrap justify-center mb-6 sm:hidden">
+        <button
+          onClick={() => navigate("/audio-rooms")}
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full"
+        >
+          🎤 Join Audio Room
+        </button>
         <button
           onClick={() => navigate("/add-resource")}
           className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition w-full"
