@@ -13,6 +13,8 @@ import AddResource from "./pages/AddResource";
 import ManageResources from "./pages/ManageResources";
 import InstrumentPage from "./pages/InstrumentPage";
 import ResourceListPage from "./pages/ResourceListPage";
+import AudioRoomsListPage from "./pages/AudioRoomsListPage";
+import AudioRoomPage from "./pages/AudioRoomPage";
 // import Header from "./pages/LogoWithText";
 
 function App() {
@@ -49,13 +51,9 @@ function App() {
         <Route path="/instrument/:instrument" element={user ? <InstrumentPage /> : <Navigate to="/login" />} />
         <Route path="/instrument/:instrument/:level" element={user ? <ResourceListPage /> : <Navigate to="/login" />} />
         
-        {/* Audio Room routes */}
-        <Route path="/audio-rooms" element={user ? <AudioRoomList /> : <Navigate to="/login" />} />
-        <Route path="/audio-room/:roomId" element={user ? <AudioRoom /> : <Navigate to="/login" />} />
-
         {/* Audio Rooms routes */}
-        <Route path="/audio-rooms" element={user ? <AudioRoomsListPage /> : <Navigate to="/login" />} /> {/* Rooms list */}
-        <Route path="/audio-rooms/:roomId" element={user ? <AudioRoomPage /> : <Navigate to="/login" />} /> {/* Specific room */}
+        <Route path="/audio-rooms" element={user ? <AudioRoomsListPage /> : <Navigate to="/login" />} />
+        <Route path="/audio-rooms/:roomId" element={user ? <AudioRoomPage /> : <Navigate to="/login" />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
